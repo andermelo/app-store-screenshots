@@ -1,0 +1,15 @@
+{
+  "name": "showapp",
+  "description": "Local-first App Store screenshot capture, editing, localization, and export for coding agents.",
+  "owner": {
+    "name": "Anderson Melo"
+  },
+  "plugins": [
+    {
+      "name": "showapp-mcp",
+      "source": "./plugins/showapp-mcp",
+      "description": "Capture, edit, localize, and export App Store screenshots with your coding agent.",
+      "version": "0.1.0"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "showapp-mcp",
+  "description": "Agentic App Store screenshot capture, editing, localization, and export.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Anderson Melo"
+  },
+  "homepage": "https://showapp.me"
+}

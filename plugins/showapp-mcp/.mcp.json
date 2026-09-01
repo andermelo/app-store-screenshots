@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "showapp": {
+      "command": "sh",
+      "args": [
+        "-c",
+        "exec node --no-warnings \"${CLAUDE_PLUGIN_ROOT:-.}/dist/showapp.mjs\" mcp"
+      ],
+      "cwd": "."
+    }
+  }
+}
