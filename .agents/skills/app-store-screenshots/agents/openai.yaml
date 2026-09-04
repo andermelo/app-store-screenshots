@@ -1,0 +1,15 @@
+interface:
+  display_name: "App Store Screenshots"
+  short_description: "Capture iOS screens for Figma, Sketch, or HTML"
+  default_prompt: "Use $app-store-screenshots to capture my iOS app in multiple locales, ask whether to compose in Figma, Sketch, or HTML, and export the selected format."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "figma"
+      description: "Remote Figma MCP server for asset upload and editable canvas updates"
+      transport: "streamable_http"
+      url: "https://mcp.figma.com/mcp"
+
+policy:
+  allow_implicit_invocation: true

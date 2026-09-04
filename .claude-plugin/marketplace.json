@@ -1,15 +1,23 @@
 {
-  "name": "showapp",
-  "description": "Local-first App Store screenshot capture, editing, localization, and export for coding agents.",
+  "name": "ander-ai",
+  "description": "Real iOS Simulator screenshots, localized and composed for the App Store, driven by your coding agent.",
   "owner": {
     "name": "Anderson Melo"
   },
   "plugins": [
     {
-      "name": "showapp-mcp",
-      "source": "./plugins/showapp-mcp",
-      "description": "Capture, edit, localize, and export App Store screenshots with your coding agent.",
-      "version": "0.1.0"
+      "name": "app-store-screenshots",
+      "source": "./plugins/app-store-screenshots",
+      "description": "Capture localized iOS screens with Maestro and compose App Store screenshots in Figma, Sketch, or the HTML studio.",
+      "version": "0.2.0",
+      "category": "design",
+      "keywords": [
+        "screenshots",
+        "app-store",
+        "ios",
+        "maestro",
+        "figma"
+      ]
     }
   ]
 }

@@ -1,97 +1,125 @@
-# ShowApp MCP
+# App Store Screenshots Skill
 
-ShowApp MCP is a light, local-first App Store screenshot studio for people and coding agents. It captures real product states in the installed Google Chrome, keeps every design editable in a browser studio, localizes text and source imagery at scale, and exports production PNGs for every locale.
+An agent skill for Claude Code, Claude Desktop and Codex that captures real iOS Simulator screens in several locales and composes App Store screenshots in Figma, Sketch, or a browser-native HTML studio.
 
-No Electron. No Remotion. No bundled browser. No AI API keys inside ShowApp.
+The workflow deliberately has no Electron app, database, bundled browser or AI runtime:
 
-## What is included
+- Maestro runs a reusable YAML flow against the Simulator and captures the real app UI.
+- Figma (or Sketch) stores the editable marketing frames; the HTML studio is the browser-native alternative with PNG export.
+- The agent (Claude or Codex) translates copy, discovers navigation flows, coordinates the tools, and verifies the result.
 
-- Focus mode for precise editing and Canvas mode for complete multi-screen compositions.
-- Shared solid, gradient, or image backgrounds that continue across screens.
-- Editable text, image, shape, and emoji layers with ordering, visibility, locking, positioning, scaling, rotation, and opacity.
-- Per-locale text and per-locale source screenshots using arbitrary BCP-47 locale codes.
-- Bulk MCP operations for hundreds of locales and thousands of localized layer values.
-- Visible Chrome automation for agent-driven navigation and capture.
-- PNG rendering through the user's installed Chrome and ZIP export by locale.
-- SQLite metadata plus content-addressed image files in `~/.showapp` by default.
-- Codex plugin, Claude Code marketplace plugin, standard MCP configuration, and standalone CLI.
+## Files
 
-## Requirements
+- [`SKILL.md`](SKILL.md) is a convenient root-level copy for reading and sharing.
+- [`.agents/skills/app-store-screenshots/SKILL.md`](.agents/skills/app-store-screenshots/SKILL.md) is the canonical skill; `.claude/skills/` and `plugins/app-store-screenshots/skills/` symlink to it for Claude Code.
+- [`.agents/skills/app-store-screenshots/assets/config.yaml`](.agents/skills/app-store-screenshots/assets/config.yaml) is the campaign configuration template.
+- [`.agents/skills/app-store-screenshots/assets/copy.yaml`](.agents/skills/app-store-screenshots/assets/copy.yaml) is the localized marketing-copy template.
+- [`.agents/skills/app-store-screenshots/references/`](.agents/skills/app-store-screenshots/references/) contains the Maestro, Figma, and campaign guidance.
+- [`.agents/skills/app-store-screenshots/scripts/png_inventory.py`](.agents/skills/app-store-screenshots/scripts/png_inventory.py) validates PNG dimensions and hashes.
+- [`.agents/skills/app-store-screenshots/assets/editor/`](.agents/skills/app-store-screenshots/assets/editor/) holds the HTML studio design system (`editor.css`, `icons.svg`, `shell.html`); [`references/editor-design.md`](.agents/skills/app-store-screenshots/references/editor-design.md) documents it.
+- [`.agents/skills/app-store-screenshots/scripts/bundle_single_file.py`](.agents/skills/app-store-screenshots/scripts/bundle_single_file.py) builds a self-contained editor for claude.ai Artifacts or offline use.
 
-- Node.js 24 or newer.
-- Google Chrome installed, or `SHOWAPP_CHROME_PATH` pointing to a Chromium executable.
+## Install
 
-## Run locally
+The canonical skill lives in `.agents/skills/app-store-screenshots/`. Pick the host you use:
+
+### Claude Code (terminal)
+
+- **Inside this repository**: nothing to install. `.claude/skills/app-store-screenshots` is a symlink to the skill and is discovered automatically.
+- **In any other project**, install the plugin from this repository's marketplace:
+
+  ```bash
+  claude plugin marketplace add andermelo/app-store-screenshots   # or the local path of this checkout
+  claude plugin install app-store-screenshots@ander-ai
+  ```
+
+- **As a personal skill** for every project, without the plugin:
+
+  ```bash
+  ln -s "$(pwd)/.agents/skills/app-store-screenshots" ~/.claude/skills/app-store-screenshots
+  ```
+
+### Claude Desktop
+
+Claude Desktop runs local Claude Code sessions on your Mac, which is what this skill needs (Maestro, Xcode and the Simulator live there; cloud sessions cannot run it).
+
+1. Open the project folder in Claude Desktop and start a local session.
+2. Press `+` → **Plugins** → **Add plugin**, add the marketplace `andermelo/app-store-screenshots` (or this checkout's path) and install `app-store-screenshots`. Skills already installed in `~/.claude/skills/` also load in local sessions.
+3. Type `/` and pick **app-store-screenshots**, or just describe the campaign; the skill triggers on its own.
+
+### Codex
+
+`.agents/skills/` is discovered automatically when you open this repository. For other projects, copy or symlink the skill into your Codex skills directory, or install the plugin exposed by `.agents/plugins/marketplace.json`. Invoke it with `$app-store-screenshots`.
+
+### Prerequisites for every host
+
+Maestro CLI 2.7.0 or newer, Xcode with a booted iOS Simulator, the app installed with deterministic demo data, and for the Figma route the remote Figma MCP connector (`upload_assets`, `use_figma`) plus edit access to the destination file.
+
+## HTML studio and single-file builds
+
+The HTML route ships a design system for the campaign editor (`assets/editor/`) and a bundler that inlines fonts, screenshots and settings into one HTML file:
 
 ```bash
-npm install
-npm run build --workspace showapp-mcp
-npm test
-npm start
+python3 .agents/skills/app-store-screenshots/scripts/bundle_single_file.py \
+  .store-screens/<campaign>/html/index.html \
+  --output .store-screens/<campaign>/html/dist/studio.html --mode standalone
 ```
 
-The Studio opens at `http://127.0.0.1:43123`.
+`--mode artifact` produces the fragment the claude.ai Artifact tool expects; publish it with the `downloads` capability so PNG export works inside the artifact. The shell uses no CDNs or remote fonts.
 
-## CLI
+## Use
 
-```bash
-npx showapp studio
-npx showapp create "My App" --locale pt-BR
-npx showapp capture --project <id> --url http://localhost:3000 --name Home
-npx showapp export --project <id> --locales all --out ./out
-npx showapp doctor
-```
-
-## Agent capture flow
-
-An MCP agent can:
-
-1. Create or inspect a project.
-2. Open the product in a dedicated visible Chrome window.
-3. Inspect headings and actions, then click, type, press keys, and wait.
-4. Capture each meaningful state directly into the project.
-5. Add editable marketing layers and locale-specific imagery.
-6. Open the Studio for visual review.
-7. Export all screens for all languages.
-
-The capture profile is isolated under the ShowApp data directory. Do not use real customer data or secrets in capture sessions.
-
-## Codex
-
-The Codex plugin is at `plugins/showapp-mcp`. Its bundled runtime is generated by:
-
-```bash
-npm run build --workspace showapp-mcp
-```
-
-The plugin manifest is `.codex-plugin/plugin.json` and its cross-client MCP configuration is `.mcp.json`.
-
-## Claude Code
-
-The repository includes a Claude Code marketplace at `.claude-plugin/marketplace.json`:
+Ask for a campaign in your own words; the skill asks one routing question (Figma, Sketch, or HTML) before composing.
 
 ```text
-/plugin marketplace add /absolute/path/to/showapp_mcp
-/plugin install showapp-mcp@showapp
+# Claude Code / Claude Desktop
+/app-store-screenshots capture o app com.example.app em en-US e pt-BR,
+nas cenas home e detail, e componha no HTML studio.
+
+# Codex
+$app-store-screenshots capture o app com.example.app em en-US e pt-BR,
+nas cenas home e detail, e sincronize no template Figma <URL>.
 ```
 
-## Generic MCP clients
+The skill creates project-specific campaign state under `.store-screens/`:
 
-The root `.mcp.json` starts the source runtime. A generic stdio configuration can use:
-
-```json
-{
-  "command": "node",
-  "args": ["/absolute/path/to/showapp_mcp/plugins/showapp-mcp/dist/showapp.mjs", "mcp"]
-}
+```text
+.store-screens/
+  config.yaml
+  copy.yaml
+  flow.yaml
+  raw/<locale>/
+  exported/<locale>/
+  review/
+  figma-manifest.json
+  STATUS.md
 ```
 
-## Data model
+Figma templates should expose one unambiguous layer for each role used by the campaign: `@screenshot`, `@headline`, and optionally `@subhead`.
 
-SQLite is the source of truth for projects, screens, layers, locales, and asset references. Binary images remain as deduplicated files. The web editor, CLI, HTTP API, and MCP server all use this same core.
+The same Maestro flow can capture every locale. Prefer stable accessibility IDs so navigation does not depend on translated labels. Locale setup happens before the flow because local `maestro test` does not accept `--device-locale`.
 
-Set `SHOWAPP_DATA_DIR` to use a different local data directory. ShowApp does not upload project data by itself.
+The default workflow stops after capture, Figma sync, and visual review. Publishing to App Store Connect requires a separate explicit request.
 
-## Origin
+## Validate the skill
 
-The workflow is inspired by [Goldie](https://github.com/kacperkapusciak/goldie), with a different architecture: MCP is the primary interface, the browser studio edits the same SQLite-backed project, and video rendering is intentionally outside the core.
+```bash
+uv run --with pyyaml python \
+  ~/.codex/skills/.system/skill-creator/scripts/quick_validate.py \
+  .agents/skills/app-store-screenshots
+```
+
+The PNG helper has no third-party runtime dependency:
+
+```bash
+python3 .agents/skills/app-store-screenshots/scripts/png_inventory.py \
+  .store-screens/raw/pt-BR --expect 2 --same-size
+```
+
+## Safety and quality
+
+- Never capture credentials, private messages, production customer data, or secrets.
+- Never use an image model to fake the app UI.
+- Keep localized marketing text editable in Figma.
+- Verify every locale visually, especially long-copy and right-to-left locales.
+- Figma writes and App Store publishing occur only when explicitly requested.

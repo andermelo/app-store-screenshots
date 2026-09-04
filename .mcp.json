@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "showapp": {
-      "command": "node",
-      "args": ["--no-warnings", "./plugins/showapp-mcp/bin/showapp.mjs", "mcp"],
-      "cwd": "."
-    }
-  }
-}

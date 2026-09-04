@@ -5,10 +5,10 @@
   },
   "plugins": [
     {
-      "name": "showapp-mcp",
+      "name": "app-store-screenshots",
       "source": {
         "source": "local",
-        "path": "./plugins/showapp-mcp"
+        "path": "./plugins/app-store-screenshots"
       },
       "policy": {
         "installation": "AVAILABLE",

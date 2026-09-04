@@ -1,0 +1,16 @@
+en-US:
+  home:
+    headline: "See the product clearly"
+    subhead: "A concise benefit written for this market."
+    emoji: "👀"
+    zoom:
+      focus: "primary-benefit"
+      anchor: "bottom"
+pt-BR:
+  home:
+    headline: "Veja o produto com clareza"
+    subhead: "Um benefício conciso e natural para este mercado."
+    emoji: "👀"
+    zoom:
+      focus: "primary-benefit"
+      anchor: "bottom"

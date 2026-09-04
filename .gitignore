@@ -2,5 +2,7 @@ node_modules/
 .DS_Store
 coverage/
 *.log
-.showapp-data/
+.store-screens/
 tmp/
+.claude/settings.local.json
+docs/

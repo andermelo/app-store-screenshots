@@ -1,0 +1,70 @@
+version: 2
+bundleId: "com.example.app"
+sourceLocale: "en-US"
+compositionTarget: ""
+maestro:
+  flow: "flow.yaml"
+  deviceUdid: ""
+  localeStrategy: "launch-arguments"
+device:
+  orientation: "portrait"
+  expectedPixelSize: ""
+locales:
+  - tag: "en-US"
+    maestroLocale: "en_US"
+    appleLanguage: "en"
+    appleLocale: "en_US"
+  - tag: "pt-BR"
+    maestroLocale: "pt_BR"
+    appleLanguage: "pt-BR"
+    appleLocale: "pt_BR"
+figma:
+  fileUrl: ""
+  destinationPage: "App Store Screenshots"
+  destinationSection: "Generated"
+  screenshotLayerName: "@screenshot"
+  headlineLayerName: "@headline"
+  subheadLayerName: "@subhead"
+  imageScaleMode: "FILL"
+composition:
+  mode: "template"
+  frameSize: ""
+  background: "#FFFFFF"
+  safeMarginPx: 24
+  zoomSource: "same-locale-screenshot-clone"
+  zoomCountPerScene: 0
+  emojiSource: "native-or-uploaded-asset"
+htmlFallback:
+  enabled: false
+  entry: "html/index.html"
+  editorStylesheet: "html/editor.css"          # copied from the skill's assets/editor/editor.css
+  exportManifest: "html/export-manifest.json"
+  canvasSettings: "html/canvas-settings.json"
+  output: "exported"
+  singleFile:
+    enabled: false
+    mode: "standalone"                          # standalone | artifact
+    output: "html/dist/studio.html"
+    fontFamilies: []                            # empty keeps every bundled family
+  magnifierEnabled: false
+  appStorePreview:
+    enabled: false
+    appIconSource: ""
+    appIconAssetCatalogName: "AppIcon"
+    appIconBundledPath: "html/assets/app-icon.png"
+  studio:
+    enabled: false
+    preserveEstablishedLayoutAsDefault: true
+    defaultBackground: "#FFFFFF"
+    synchronizedVisualStateByScene: true
+    localizedCopyByRoute: true
+    sceneReordering: true
+    undoRedo: true
+    editorThemeToggle: true
+    thirdPartyNotices: "html/THIRD_PARTY_NOTICES.md"
+scenes:
+  - id: "home"
+    index: "01"
+    screenshotName: "home"
+    templateUrl: ""
+    postcondition: "Describe the visible state that proves this is the intended screen"

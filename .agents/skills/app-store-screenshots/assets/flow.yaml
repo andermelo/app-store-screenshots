@@ -1,0 +1,8 @@
+appId: ${APP_ID}
+---
+- launchApp:
+    stopApp: false
+- assertVisible:
+    id: "home_screen"
+- takeScreenshot:
+    path: "home"

@@ -1,0 +1,101 @@
+<!doctype html>
+<!--
+  Campaign editor shell — reference markup.
+  Copy this file to `.store-screens/<campaign>/html/index.html`, then:
+    1. keep `editor.css` next to it (or inline it when the page must be a single file, e.g. a claude.ai Artifact);
+    2. paste the <symbol> set from `icons.svg` into the hidden <svg> at the top of <body>;
+    3. write the board artwork CSS inside <style id="campaign-css"> — that is the only CSS the PNG export embeds;
+    4. fill the `data-*` hooks and the script contract listed in references/editor-design.md.
+  Every id below is part of the editor's JavaScript contract; keep them stable.
+  UI copy must be written in the campaign's source locale.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="app-store-export" content="true">
+  <title>{{appName}} · Campaign editor</title>
+  <link rel="stylesheet" href="editor.css">
+  <style id="campaign-css">
+    /* Board artwork only. Local @font-face rules, .board layout, .device, .headline, .subhead ... */
+  </style>
+</head>
+<body>
+  <!-- icons.svg goes here -->
+
+  <header class="topbar" aria-label="Campaign tools">
+    <div class="topbar-left">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"><svg class="icon"><use href="#i-smartphone"/></svg></span>
+        <span class="brand-name">App Store Studio</span>
+        <span class="brand-campaign" id="campaign-name">{{appName}}</span>
+      </div>
+    </div>
+
+    <div class="seg" id="locale-seg" role="tablist" aria-label="Locale">
+      <!-- one <button role="tab" data-value="<bcp47>"> per locale -->
+    </div>
+
+    <div class="topbar-right">
+      <div class="btn-group">
+        <button class="btn btn-icon" id="undo" aria-label="Undo" data-tip="Undo ⌘Z" disabled><svg class="icon"><use href="#i-undo"/></svg></button>
+        <button class="btn btn-icon" id="redo" aria-label="Redo" data-tip="Redo ⇧⌘Z" disabled><svg class="icon"><use href="#i-redo"/></svg></button>
+      </div>
+      <span class="divider"></span>
+      <div class="btn-group">
+        <button class="btn btn-icon" id="load-settings" aria-label="Load settings" data-tip="Load canvas-settings.json"><svg class="icon"><use href="#i-upload"/></svg></button>
+        <button class="btn btn-icon" id="save-settings" aria-label="Save settings" data-tip="Save canvas-settings.json"><svg class="icon"><use href="#i-download"/></svg></button>
+        <input type="file" id="settings-file" accept="application/json" hidden>
+        <button class="btn btn-icon" id="toggle-theme" aria-label="Toggle editor theme" data-tip="Editor theme"><svg class="icon" id="theme-icon"><use href="#i-moon"/></svg></button>
+      </div>
+      <span class="divider"></span>
+      <button class="btn btn-icon" id="appstore-preview-toggle" aria-label="Preview in App Store" data-tip="App Store preview"><svg class="icon"><use href="#i-eye"/></svg></button>
+      <button class="btn btn-icon" id="export-current" aria-label="Export selected board" data-tip="Export selected PNG"><svg class="icon"><use href="#i-image"/></svg></button>
+      <button class="btn btn-primary" id="export-all"><svg class="icon"><use href="#i-layers"/></svg><span id="export-all-label">Export PNGs</span></button>
+      <span class="divider"></span>
+      <button class="btn btn-icon is-active" id="toggle-inspector" aria-label="Toggle inspector" aria-pressed="true" data-tip="Inspector"><svg class="icon"><use href="#i-panel-right"/></svg></button>
+    </div>
+  </header>
+
+  <main class="canvas" id="canvas">
+    <div class="gallery" id="gallery"></div>
+  </main>
+
+  <footer class="statusbar" aria-label="Status">
+    <span class="status-item" id="status-count"></span>
+    <span class="status-item" id="status-size"></span>
+    <span class="status-item" id="status-safe"></span>
+    <span class="spacer"></span>
+    <span class="status-item" id="status-saved"><span class="dot"></span><span>Saved locally</span></span>
+    <label class="zoom"><svg class="icon sm"><use href="#i-zoom"/></svg><input type="range" id="zoom" min="12" max="30" step="1" value="18" aria-label="Zoom"><output id="zoom-value">18%</output></label>
+  </footer>
+
+  <aside class="inspector" id="inspector" aria-label="Inspector">
+    <div class="inspector-head">
+      <div class="crumb"><span class="crumb-locale" id="crumb-locale"></span><span class="sep">/</span><span class="crumb-scene" id="crumb-scene"></span></div>
+      <button class="btn btn-icon sm btn-ghost-danger" id="reset-current" aria-label="Reset this board" data-tip="Reset" data-tip-pos="left"><svg class="icon sm"><use href="#i-rotate-ccw"/></svg></button>
+    </div>
+    <div class="tabs" role="tablist">
+      <button class="tab is-active" role="tab" data-tab="design" aria-selected="true"><svg class="icon sm"><use href="#i-layout"/></svg>Design</button>
+      <button class="tab" role="tab" data-tab="copy" aria-selected="false"><svg class="icon sm"><use href="#i-type"/></svg>Copy</button>
+    </div>
+    <div class="inspector-body">
+      <section class="panel" data-panel="design">
+        <!-- groups: Template & layout (layout choices are .layout-picker tile grids with .layout-glyph previews, never plain selects) · Background · Device frame · Order -->
+      </section>
+      <section class="panel" data-panel="copy" hidden>
+        <!-- groups: Headline · Subhead (text, family, size/weight, line-height/tracking, style/align, color) -->
+      </section>
+    </div>
+  </aside>
+
+  <div class="store-preview-backdrop" id="store-preview-backdrop" hidden></div>
+  <section class="store-preview-modal" id="store-preview" role="dialog" aria-modal="true" aria-labelledby="store-preview-title" hidden>
+    <!-- read-only App Store listing preview built from live board clones -->
+  </section>
+
+  <script>
+    // Campaign data, layouts, state, history, export, render route. See references/editor-design.md.
+  </script>
+</body>
+</html>

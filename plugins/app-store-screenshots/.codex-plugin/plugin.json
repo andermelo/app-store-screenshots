@@ -1,0 +1,34 @@
+{
+  "name": "app-store-screenshots",
+  "version": "0.2.0",
+  "description": "Capture real localized iOS Simulator screens with Maestro and compose App Store screenshots in Figma, Sketch, or a browser-native HTML studio.",
+  "author": {
+    "name": "Anderson Melo"
+  },
+  "repository": "https://github.com/andermelo/app-store-screenshots",
+  "license": "MIT",
+  "keywords": [
+    "screenshots",
+    "app-store",
+    "ios",
+    "maestro",
+    "figma",
+    "localization"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "App Store Screenshots",
+    "shortDescription": "Real iOS screens, localized, composed for the App Store.",
+    "developerName": "Anderson Melo",
+    "category": "Design",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "brandColor": "#2F6BFF",
+    "defaultPrompt": [
+      "Capture my iOS app in en-US and pt-BR and compose the App Store screenshots in HTML.",
+      "Sync the campaign screenshots into my Figma template."
+    ]
+  }
+}
