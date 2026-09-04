@@ -6,3 +6,5 @@ coverage/
 tmp/
 .claude/settings.local.json
 docs/
+__pycache__/
+*.pyc
