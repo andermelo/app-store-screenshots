@@ -1,11 +1,13 @@
 ---
 name: app-store-screenshots
-description: Capture real localized iOS Simulator screens with Maestro and route App Store composition to the user's chosen Figma, Sketch, or browser-native HTML/PNG output. Use for multilingual campaigns, repeatable Maestro flows, creative zoom treatments, editable composition, visual review, and localized export; do not use for Android or web-only capture.
+description: Create and update App Store screenshot campaigns from real iOS captures or supplied PNGs. Use for store screenshots, localized marketing boards, adding scenes to existing campaigns, and editable Figma, Sketch or HTML/PNG exports. Supports repeatable Maestro capture and existing deterministic app drivers.
 ---
 
 # App Store screenshots
 
-Use Maestro for repeatable Simulator navigation and PNG capture, then compose in the user-selected target: Figma, Sketch, or browser-native HTML. The agent owns localization, orchestration, and visual verification. Never choose a target silently. Do not introduce a general-purpose design editor, database, bundled browser, or another capture application.
+Use Maestro by default for Simulator capture, or reuse an existing tested app driver. Compose in the user-selected target: Figma, Sketch, or browser-native HTML. Preserve an existing campaign's target and saved state. Do not introduce a general-purpose design editor, database, bundled browser, or another capture application.
+
+For supplied images, incremental campaign updates, or fast capture, read [fast-capture.md](.agents/skills/app-store-screenshots/references/fast-capture.md). Skip capture setup when usable screenshots already exist; validate and compose the requested scenes directly.
 
 The focused HTML campaign editor—including copy, typography, and curated layout controls—belongs only to the HTML route described in [html-fallback.md](.agents/skills/app-store-screenshots/references/html-fallback.md). Do not open, generate, or rely on that editor during Figma or Sketch runs.
 
@@ -17,8 +19,8 @@ When the campaign asks for an editorial or magnified treatment, read [creative-c
 
 ## Requirements
 
-- Maestro CLI with `test` and `takeScreenshot`. Use Maestro 2.7.0 or newer with Xcode/iOS 26.
-- A booted iOS Simulator with the app installed and deterministic demo data.
+- For new Maestro captures: Maestro CLI with `test` and `takeScreenshot`; use 2.7.0 or newer with Xcode/iOS 26.
+- For new captures: a booted iOS Simulator with the app installed and deterministic demo data. Supplied PNGs need neither Simulator nor Maestro.
 - For Figma: the remote Figma MCP server with `upload_assets` and `use_figma`, Figma's foundational `figma-use` skill, and a destination Design file with edit access.
 - For Sketch: an installed, verified Sketch integration capable of creating or updating native editable documents. Do not promise Sketch output until that capability passes preflight.
 - For HTML: a system-installed browser; never download or bundle Chromium.
@@ -48,7 +50,7 @@ If these files are absent, copy `config.yaml`, `copy.yaml`, and `flow.yaml` from
 
 ### 1. Resolve the campaign
 
-Determine the bundle ID, Simulator, locales, and scenes. Before composition, ask one routing question in the user's language, equivalent to: **"Where should we compose and export this campaign: Figma, Sketch, or HTML?"** Record the answer as `compositionTarget` in `config.yaml`. If the current request already contains one unambiguous choice, treat it as the answer instead of asking redundantly.
+Determine the requested scenes and locales. Reuse the target recorded in an existing campaign or explicitly selected by the user. Only when unresolved, ask: **"Where should we compose and export this campaign: Figma, Sketch, or HTML?"** Record the choice as `compositionTarget`. Resolve bundle ID and Simulator only when new capture is needed.
 
 Do not start another target as a fallback when the selected one is blocked. Report the blocker and ask whether the user wants to switch. Figma and Sketch writes are external mutations: perform them only after that target was selected and its destination was supplied or confirmed.
 
@@ -118,7 +120,7 @@ Use the selected target's verified export path. For Figma, use `download_assets`
 
 Do not call the campaign complete unless:
 
-- raw capture count equals locales times scenes;
+- requested scenes have verified source PNGs; full new captures match the declared locale/scene matrix, while incremental updates verify only their requested additions;
 - every capture is a readable PNG from the intended app state and locale;
 - every requested composition exists exactly once in the selected target with the correct bitmap and copy;
 - visual review covers every locale;

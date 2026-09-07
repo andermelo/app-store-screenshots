@@ -9,7 +9,7 @@
       "name": "app-store-screenshots",
       "source": "./plugins/app-store-screenshots",
       "description": "Capture localized iOS screens with Maestro and compose App Store screenshots in Figma, Sketch, or the HTML studio.",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "category": "design",
       "keywords": [
         "screenshots",

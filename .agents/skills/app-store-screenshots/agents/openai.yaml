@@ -1,7 +1,7 @@
 interface:
   display_name: "App Store Screenshots"
   short_description: "Capture iOS screens for Figma, Sketch, or HTML"
-  default_prompt: "Use $app-store-screenshots to capture my iOS app in multiple locales, ask whether to compose in Figma, Sketch, or HTML, and export the selected format."
+  default_prompt: "Use $app-store-screenshots to create or update my App Store campaign, reuse existing captures and the selected composition target, and export the requested scenes."
 
 dependencies:
   tools:

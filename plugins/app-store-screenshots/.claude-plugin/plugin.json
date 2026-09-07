@@ -2,7 +2,7 @@
   "name": "app-store-screenshots",
   "displayName": "App Store Screenshots",
   "description": "Capture real localized iOS Simulator screens with Maestro and compose App Store screenshots in Figma, Sketch, or a browser-native HTML studio.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": {
     "name": "Anderson Melo"
   },
