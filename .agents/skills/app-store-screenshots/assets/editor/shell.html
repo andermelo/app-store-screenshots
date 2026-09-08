@@ -44,7 +44,7 @@
       <span class="divider"></span>
       <div class="btn-group">
         <button class="btn btn-icon" id="load-settings" aria-label="Load settings" data-tip="Load canvas-settings.json"><svg class="icon"><use href="#i-upload"/></svg></button>
-        <button class="btn btn-icon" id="save-settings" aria-label="Save settings" data-tip="Save canvas-settings.json"><svg class="icon"><use href="#i-download"/></svg></button>
+        <button class="btn btn-icon" id="save-settings" aria-label="Save settings" data-tip="Save canvas-settings.json"><svg class="icon"><use href="#i-save"/></svg></button>
         <input type="file" id="settings-file" accept="application/json" hidden>
         <button class="btn btn-icon" id="toggle-theme" aria-label="Toggle editor theme" data-tip="Editor theme"><svg class="icon" id="theme-icon"><use href="#i-moon"/></svg></button>
       </div>
@@ -69,6 +69,8 @@
     <span class="status-item" id="status-saved"><span class="dot"></span><span>Saved locally</span></span>
     <label class="zoom"><svg class="icon sm"><use href="#i-zoom"/></svg><input type="range" id="zoom" min="12" max="30" step="1" value="18" aria-label="Zoom"><output id="zoom-value">18%</output></label>
   </footer>
+
+  <div class="toast-host" id="toast-host" role="status" aria-live="polite"></div>
 
   <aside class="inspector" id="inspector" aria-label="Inspector">
     <div class="inspector-head">
@@ -96,6 +98,19 @@
 
   <script>
     // Campaign data, layouts, state, history, export, render route. See references/editor-design.md.
+
+    // Transient confirmation. tone: "success" | "danger" | undefined. Keep messages short and in the source locale.
+    function showToast(message, {tone, icon = tone === "danger" ? "i-x" : "i-check", duration = 2600} = {}) {
+      const host = document.getElementById("toast-host");
+      const toast = document.createElement("div");
+      toast.className = "toast" + (tone ? ` is-${tone}` : "");
+      toast.innerHTML = `<svg class="icon"><use href="#${icon}"/></svg><span></span>`;
+      toast.querySelector("span").textContent = message;
+      host.append(toast);
+      setTimeout(() => { toast.classList.add("is-leaving"); toast.addEventListener("animationend", () => toast.remove(), {once: true}); setTimeout(() => toast.remove(), 400); }, duration);
+    }
+    // save-settings: after canvas-settings.json is written, showToast("Settings saved", {tone: "success"});
+    // a cancelled file picker (AbortError) shows nothing; any other failure shows a danger toast.
   </script>
 </body>
 </html>
