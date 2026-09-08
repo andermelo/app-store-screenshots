@@ -66,7 +66,7 @@
     <span class="status-item" id="status-size"></span>
     <span class="status-item" id="status-safe"></span>
     <span class="spacer"></span>
-    <span class="status-item" id="status-saved"><span class="dot"></span><span>Saved locally</span></span>
+    <span class="status-item" id="status-saved" role="status" aria-live="polite"><span class="dot"></span><span class="spinner" aria-hidden="true"></span><span class="autosave-text">Saved locally</span></span>
     <label class="zoom"><svg class="icon sm"><use href="#i-zoom"/></svg><input type="range" id="zoom" min="12" max="30" step="1" value="18" aria-label="Zoom"><output id="zoom-value">18%</output></label>
   </footer>
 
@@ -111,6 +111,67 @@
     }
     // save-settings: after canvas-settings.json is written, showToast("Settings saved", {tone: "success"});
     // a cancelled file picker (AbortError) shows nothing; any other failure shows a danger toast.
+
+    // Autosave indicator. Every localStorage write of campaign content calls noteAutosave():
+    // rapid edits coalesce into one "saving" pulse, then a "Saved :)" shine, then idle.
+    // Zoom/locale preferences are not progress and must NOT call it.
+    const autosave = (() => {
+      const el = document.getElementById("status-saved");
+      const text = el?.querySelector(".autosave-text");
+      const IDLE = "Saved locally", SAVING = "Saving…", SAVED = "Saved :)";
+      let savingTimer = null, savedTimer = null;
+      function show(state, label) {
+        if (!el) return;
+        el.classList.toggle("is-saving", state === "saving");
+        el.classList.toggle("is-saved", state === "saved");
+        if (text && text.textContent !== label) text.textContent = label;
+      }
+      return {
+        note() {
+          if (!el) return;
+          clearTimeout(savedTimer);
+          if (!el.classList.contains("is-saving")) show("saving", SAVING);
+          clearTimeout(savingTimer);
+          savingTimer = setTimeout(() => {
+            show("saved", SAVED);
+            savedTimer = setTimeout(() => show("idle", IDLE), 2200);
+          }, 500);
+        }
+      };
+    })();
+    function noteAutosave() { autosave.note(); }
+
+    // Call noteAutosave() from every localStorage write of campaign content (per-route copy state,
+    // design state, history restore). NOT from zoom/locale/theme preferences.
+
+    // Status bar counts are DERIVED from the rendered gallery — never type "15 PNGs" or
+    // "15 boards · 3 locales" into the markup. Call syncCounts() once after buildGallery() and
+    // watchCounts() so any later add/remove/hide of boards updates the labels automatically.
+    // BOARD = { width, height } and SAFE come from canvas-settings.json; scenes is the campaign data.
+    function syncCounts() {
+      const boards = [...document.querySelectorAll(".preview .board")];
+      const localesInUse = new Set(boards.map(board => board.dataset.locale));
+      const localeCount = localesInUse.size || Object.keys(scenes).length;
+      const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+      const exportLabel = document.getElementById("export-all-label");
+      if (exportLabel) exportLabel.textContent = `Export ${plural(boards.length, "PNG", "PNGs")}`;
+      const exportButton = document.getElementById("export-all");
+      if (exportButton) exportButton.disabled = boards.length === 0;
+      const count = document.getElementById("status-count");
+      if (count) count.textContent = `${plural(boards.length, "board", "boards")} · ${plural(localeCount, "locale", "locales")}`;
+      const size = document.getElementById("status-size");
+      if (size) size.textContent = `${BOARD.width} × ${BOARD.height} px`;
+      const safe = document.getElementById("status-safe");
+      if (safe) safe.textContent = `safe margin ${SAFE} px`;
+    }
+    let countsObserver = null;
+    function watchCounts() {
+      if (countsObserver) return;
+      const gallery = document.getElementById("gallery");
+      if (!gallery || typeof MutationObserver === "undefined") return;
+      countsObserver = new MutationObserver(() => syncCounts());
+      countsObserver.observe(gallery, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden", "data-locale"] });
+    }
   </script>
 </body>
 </html>

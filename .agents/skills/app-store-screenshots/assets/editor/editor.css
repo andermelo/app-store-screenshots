@@ -249,7 +249,34 @@ button { cursor: pointer; }
 }
 .statusbar .spacer { flex: 1; }
 .status-item { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
-.status-item .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
+.status-item .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); flex: none; transition: background .2s, box-shadow .3s; }
+
+/* Autosave indicator (#status-saved): idle → is-saving (spinner) → is-saved (shimmer) → idle.
+ * The localStorage write is instant; the script holds "saving" ~500 ms so the eye registers it. */
+#status-saved { position: relative; min-width: 148px; }
+#status-saved .autosave-text { transition: color .2s; }
+#status-saved .spinner {
+  display: none; width: 10px; height: 10px; flex: none; border-radius: 50%;
+  border: 1.5px solid var(--line-strong); border-top-color: var(--accent);
+  animation: autosave-spin .7s linear infinite;
+}
+#status-saved.is-saving .dot { display: none; }
+#status-saved.is-saving .spinner { display: inline-block; }
+#status-saved.is-saving .autosave-text { color: var(--text-3); }
+#status-saved.is-saved .dot { background: var(--success); box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 22%, transparent), 0 0 10px color-mix(in srgb, var(--success) 55%, transparent); animation: autosave-pop .45s var(--ease); }
+#status-saved.is-saved .autosave-text {
+  font-weight: 600;
+  background: linear-gradient(100deg, var(--success) 0%, var(--success) 38%, #fff 50%, var(--success) 62%, var(--success) 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
+  animation: autosave-shine 1.6s var(--ease) 1 both;
+}
+@keyframes autosave-spin { to { transform: rotate(360deg); } }
+@keyframes autosave-pop { 0% { transform: scale(.6); } 60% { transform: scale(1.35); } 100% { transform: scale(1); } }
+@keyframes autosave-shine { 0% { background-position: 120% 0; } 100% { background-position: -20% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  #status-saved.is-saved .autosave-text { background: none; color: var(--success); -webkit-text-fill-color: currentColor; }
+}
 .zoom { display: inline-flex; align-items: center; gap: 8px; }
 .zoom input[type="range"] { width: 110px; }
 .zoom output { font: 500 11px/1 var(--font-mono); color: var(--text-2); min-width: 32px; text-align: right; }
