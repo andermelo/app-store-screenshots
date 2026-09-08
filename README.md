@@ -2,6 +2,8 @@
 
 An agent skill for Claude Code, Claude Desktop and Codex that captures real iOS Simulator screens in several locales and composes App Store screenshots in Figma, Sketch, or a browser-native HTML studio.
 
+![HTML studio composing a localized 15-board campaign](.github/editor-preview.png)
+
 The workflow deliberately has no Electron app, database, bundled browser or AI runtime:
 
 - Maestro runs a reusable YAML flow against the Simulator and captures the real app UI.
