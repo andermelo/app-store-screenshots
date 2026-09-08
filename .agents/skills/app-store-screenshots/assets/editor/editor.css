@@ -504,3 +504,7 @@ body.render-mode .board { transform: none; }
 @keyframes toast-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @keyframes toast-out { to { opacity: 0; transform: translateY(4px); } }
 @media (prefers-reduced-motion: reduce) { .toast, .toast.is-leaving { animation: none; } }
+
+.check-row { display: flex; align-items: center; gap: 8px; cursor: pointer; -webkit-user-select: none; user-select: none; }
+.check-row input[type="checkbox"] { width: 15px; height: 15px; margin: 0; accent-color: var(--accent); cursor: pointer; }
+.check-row span { font-size: 12px; font-weight: 500; color: var(--text-2); }
