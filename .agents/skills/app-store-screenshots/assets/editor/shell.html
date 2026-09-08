@@ -7,7 +7,8 @@
     3. write the board artwork CSS inside <style id="campaign-css"> — that is the only CSS the PNG export embeds;
     4. fill the `data-*` hooks and the script contract listed in references/editor-design.md.
   Every id below is part of the editor's JavaScript contract; keep them stable.
-  UI copy must be written in the campaign's source locale.
+  UI copy is always English, regardless of the campaign's source locale — this is the editor's own
+  interface, not exported content. The board text inside .headline/.subhead still follows that locale.
 -->
 <html lang="en">
 <head>
@@ -104,7 +105,7 @@
   <script>
     // Campaign data, layouts, state, history, export, render route. See references/editor-design.md.
 
-    // Transient confirmation. tone: "success" | "danger" | undefined. Keep messages short and in the source locale.
+    // Transient confirmation. tone: "success" | "danger" | undefined. Keep messages short, in English.
     function showToast(message, {tone, icon = tone === "danger" ? "i-x" : "i-check", duration = 2600} = {}) {
       const host = document.getElementById("toast-host");
       const toast = document.createElement("div");
