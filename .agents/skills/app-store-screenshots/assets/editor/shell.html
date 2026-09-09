@@ -26,6 +26,11 @@
 
   <header class="topbar" aria-label="Campaign tools">
     <div class="topbar-left">
+      <!-- Optional: enable only with real captures for both devices; keep saved state separate. -->
+      <div class="btn-group" id="device-switcher" role="group" aria-label="Screenshot device" hidden>
+        <button class="btn btn-icon" type="button" data-device="iphone" aria-label="iPhone screenshots" aria-pressed="true" data-tip="iPhone screenshots"><svg class="icon"><use href="#i-smartphone"/></svg></button>
+        <button class="btn btn-icon" type="button" data-device="ipad" aria-label="iPad screenshots" aria-pressed="false" data-tip="iPad screenshots"><svg class="icon"><use href="#i-tablet"/></svg></button>
+      </div>
       <div class="brand">
         <span class="brand-mark" aria-hidden="true"><svg class="icon"><use href="#i-smartphone"/></svg></span>
         <span class="brand-name">App Store Studio</span>
@@ -90,6 +95,12 @@
              itself stays opt-in, but never hardcode its opacity once it exists -->
       </section>
       <section class="panel" data-panel="copy" hidden>
+        <div class="group">
+          <h3 class="group-title">Spacing</h3>
+          <div class="field"><label class="field-label" for="copy-gap">Title → description <output id="copy-gap-value">Template</output></label><input type="range" id="copy-gap" min="0" max="240" step="1" value="56"></div>
+          <button class="btn sm btn-outline" id="copy-gap-reset" type="button">Use template spacing</button>
+          <p class="hint">This board only. Adjusts the gap below the actual title, without moving the screenshot.</p>
+        </div>
         <!-- groups: Headline · Subhead (text, family, size/weight, line-height/tracking, style/align, color)
              Standard per group, for every campaign: a text highlighter/marker, a 3-way style toggle (None/Straight/Brush,
              default None), a 10-100 thickness range, and a color field. See "Text highlighter" in editor-design.md. -->

@@ -36,7 +36,30 @@ Board artwork stays in `<style id="campaign-css">`. That block is the only CSS t
 
 ## Script contract
 
-The shell markup expects these ids: `locale-seg`, `undo`, `redo`, `load-settings`, `save-settings`, `settings-file`, `toast-host`, `toggle-theme`, `theme-icon`, `appstore-preview-toggle`, `export-current`, `export-all`, `toggle-inspector`, `canvas`, `gallery`, `zoom`, `zoom-value`, `crumb-locale`, `crumb-scene`, `reset-current`, the `.tab[data-tab]` / `.panel[data-panel]` pairs, the design controls (`template-select`, `template-preview`, `default-layout` and `scene-layout` tile pickers, `scene-layout-name`, `background-*`, `font-preset`, `frame-*`, `order-label`, `move-back`, `move-forward`) and the copy controls, standard for every campaign: `<key>-text|family|size|weight|line-height|letter-spacing|align|style|color|color-text|highlight|highlight-size|highlight-color|highlight-color-text` for `headline` and `subhead`. Only when a campaign also has a decorative background image layer does it additionally need `doodle-opacity`, `doodle-opacity-value` and `scene-hide-background` in the design controls — that image layer itself stays opt-in, but once it exists these controls for it are mandatory, never a hardcoded opacity.
+### Device switcher (iPhone/iPad)
+
+`#device-switcher` in the topbar is a two-button group (`data-device="iphone"|"ipad"`, icons `i-smartphone`/`i-tablet`) that swaps the whole campaign to a second device's board dimensions and screenshots. Keep it `hidden` in the shell reference — show it only once a campaign actually has real captures for a second device; never show a device mode backed by upscaled or placeholder screenshots. Read the mode from `?device=ipad` in the URL (default iPhone), not from a persisted preference, and switch by navigating (`location.href = ...`), not by re-rendering in place — the two modes have different `BOARD` dimensions, scene sets and default `designState`, so a fresh load keeps that simple. Store the second device's screenshots under `screenshots/<device>/<locale>/<index>-<id>.png`, parallel to the default set, and derive `screenshotPath`/routes from the same `IS_IPAD`-style flag so one campaign file serves both.
+
+A second device rarely has captures for every scene: filter that device's `scenes` down to only the ids with real screenshots (re-indexed 01, 02, …), rather than showing broken boards for the rest. Give the second device its own `DEFAULT_DESIGN` overrides where the first device's defaults don't fit — a decorative background layer tuned for a phone-sized board usually needs a lower default opacity on a much larger tablet canvas, for instance — and namespace persisted settings separately (a `device` field in the saved JSON, a version flag for one-time migrations) so switching devices never corrupts the other device's saved state.
+
+### Title–description spacing (Copy sidebar)
+
+Include `copy-gap` (range 0–240, step 1, board pixels), `copy-gap-value` and
+`copy-gap-reset` in a compact Spacing group. English label: “Title → description”.
+Persist `copyGap: number | null` with the selected board's per-route state,
+including device and locale. `null` means existing template geometry; older saved
+boards must not jump when loaded. Explicit values remove the headline's reserved
+`min-height` and set the description's `margin-top`, so zero really closes the gap
+below the rendered title. Never fake this by translating text over another layer.
+Do not move the screenshot or change font size to implement spacing.
+
+Update immediately on slider input, use existing autosave/undo hooks, and include
+the value in settings save/load and PNG/render exports. Reset returns to template
+spacing. Keep independent localized boards independent, since wrapping differs.
+Verify zero, wrapped titles, reload, another locale, undo/redo, reset and an actual
+export. Do not change unrelated user styles when adding this control.
+
+The shell markup expects these ids: `locale-seg`, `undo`, `redo`, `load-settings`, `save-settings`, `settings-file`, `toast-host`, `toggle-theme`, `theme-icon`, `appstore-preview-toggle`, `export-current`, `export-all`, `toggle-inspector`, `canvas`, `gallery`, `zoom`, `zoom-value`, `crumb-locale`, `crumb-scene`, `reset-current`, the `.tab[data-tab]` / `.panel[data-panel]` pairs, the design controls (`template-select`, `template-preview`, `default-layout` and `scene-layout` tile pickers, `scene-layout-name`, `background-*`, `font-preset`, `frame-*`, `order-label`, `move-back`, `move-forward`) and the copy controls, standard for every campaign: `<key>-text|family|size|weight|line-height|letter-spacing|align|style|color|color-text|highlight|highlight-size|highlight-color|highlight-color-text` for `headline` and `subhead`. Only when a campaign also has a decorative background image layer does it additionally need `doodle-opacity`, `doodle-opacity-value` and `scene-hide-background` in the design controls — that image layer itself stays opt-in, but once it exists these controls for it are mandatory, never a hardcoded opacity. `copy-gap`, `copy-gap-value` and `copy-gap-reset` are likewise standard, in a Spacing group of the copy controls (see below). `device-switcher` and its `data-device` buttons stay `hidden` in the reference shell; wire and unhide them only for a campaign with real second-device captures (see "Device switcher" above).
 
 Segmented controls are plain `<button data-value>` groups; wrap them with a small `segControl()` helper so they expose `.value` and fire `input`/`change` like form fields. Each `.preview` renders `.board-shell > .board` followed by `.caption`; the caption is the drag handle for reordering.
 
